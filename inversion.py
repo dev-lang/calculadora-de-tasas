@@ -1,4 +1,5 @@
-#
+# v0.2.2 4 dic 2020 23:00
+# some bugfixes and changes
 import matplotlib.pyplot as ploteame
 
 class error:
@@ -11,7 +12,7 @@ a = 1
 b = 13
 c = 30
 perdida = 2 # porcentaje
-perdida_final = 4 # restar al final, es lo que retiene la entidad bancaria por cada operacion diaria
+perdida_final = 0 # restar al final, es lo que retiene la entidad bancaria por cada operacion diaria
 
 Flag_Set = 0
 
@@ -56,12 +57,25 @@ data_bp_preset = [32966.933333333334,33933.86666666667,35984.603342222224,38159.
 #data_bp_preset_broken = [35984.603342222224,38159.272870870525,40465.364928033465,42910.82181518429,45504.06581354859,48254.02819088071,51170.17996121627,54262.564503539106,57541.83215170298,61019.27687473757]
 
 
+
 plot_scale = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] # MESES, EJE X    # OK - ESCALA CHEQUEADA
 
-def Graficar_Proyecciones(data_fci, data_bp, plot_scale):   # OK - CHEQUEADO
-    ploteame.plot(plot_scale,data_fci,
-                  plot_scale,data_bp)
+fmt1 = 'b'
+fmt2 = 'g'
 
+def Graficar_Proyecciones(data_fci, data_bp, plot_scale):   # OK - CHEQUEADO
+    ploteame.title("Calculadora de TASAS version alpha")
+    ploteame.plot(plot_scale,data_fci, fmt1,
+                  plot_scale,data_bp, fmt2)
+    ploteame.grid(True)
+    #print("axis: ", ploteame.axis())
+    #print(data_fci.index[13], data_bp.index[13])
+    #ploteame.axis(1, 13, data_fci.index[13], data_bp.index[13])
+    #print("axis: ", ploteame.axis())
+    ploteame.xlim(1, 13)                                    # ALTERNATIVA A MODIFICAR AXIS, PERMITE MANTENER VALOR Y SEGUN REGISTRO
+    ploteame.ylabel("Importe/Ganancia")
+    ploteame.xlabel("Meses/Tiempo")
+    ploteame.legend(['FCI', 'BP'])                          # ALTERNATIVA A APLICAR EL LABEL EN EL PLOT, PERMITE MANTENER LA SINTAXIS, X1 Y X2
     ploteame.show()
 
 def Setear_Flag(flag):                                      # OK
@@ -89,8 +103,12 @@ def Agregar_A_Lista(total_mensual):                         # OK
 
 while True:
     ingreso = input("Ingrese el monto a invertir:")
+    ingreso_inicial = ingreso # se almacena el ingreso para evitar que luego
+                              # se haga un calculo con ingreso y los meses
+                              # queden con la variable ingreso ya procesada
     try:
         ingreso = float(ingreso)
+        ingreso_inicial = float(ingreso_inicial)
         break
     except ValueError:
         print(error.notanumber)
@@ -119,6 +137,7 @@ def Clear_Numeros():
     calc_inve = 0
     total_mensual = 0
     perdida = 0
+    ingreso = ingreso_inicial
     #print("VALOR ACTUAL: ",
     #      "resultado: ", resultado,
     #      "final: ", final,
@@ -148,7 +167,7 @@ def nGanancia_Anual(ingreso, tasa): # corregir dias de fin de semana (excluirlos
         # Calcular_Inversion()
         # poner la ganacia junto al valor anterior en una variable
         Calcular_Inversion(ingreso, tasa)
-        total_mensual = total + final
+        total_mensual = total #+ final
         ingreso = total_mensual
         
         Agregar_A_Lista(total_mensual)
@@ -180,6 +199,7 @@ def nGanancia_Anual(ingreso, tasa): # corregir dias de fin de semana (excluirlos
 #print(ingreso, tasa)
 Calcular_Inversion(ingreso, tasa)
 
+Clear_Numeros()
 
 
 diaria = final/30
@@ -197,8 +217,12 @@ print("Monto ingresado: $", ingreso, "\nTasa estimada:", tasa,          #   OK
       "\nGanancia a la primer semana: $", (diaria-correccion)*7,        #   FAIL HEREDADO
       "\n\nGanancia al primer mes: $", final, "\nTotal: $", total, "\n")#   FAIL HEREDADO
 
+ingreso = ingreso_inicial
+total = ingreso
+#print(ingreso, total, ingreso_inicial)
 
-Calcular_Inversion(ingreso, tasa_plazo_fijo)
+
+#Calcular_Inversion(ingreso, tasa_plazo_fijo)
 
 #Clear_Numeros()
 
@@ -211,8 +235,8 @@ print(" TASA FCI")
 # 3
 ''' GANANCIA ANUAL POR TASA FCI '''
 
-
-nGanancia_Anual(ingreso, tasa)
+#print("INGRESO INICIAL: $", ingreso_inicial)
+nGanancia_Anual(ingreso_inicial, tasa)
 # 1
 Setear_Flag(2)
 #print("FLAGSET: ", Flag_Set)
@@ -220,7 +244,7 @@ Setear_Flag(2)
 print("\n TASA PLAZO FIJO")
 # 3
 ''' GANANCIA ANUAL POR TASA PLAZO FIJO '''
-nGanancia_Anual(ingreso, tasa_plazo_fijo)
+nGanancia_Anual(ingreso_inicial, tasa_plazo_fijo)
 
 #print("\nDEBUG DE VARIABLES\n",
 #      "FCI GENERADA:",  type(data_fci), data_fci, "\n",
