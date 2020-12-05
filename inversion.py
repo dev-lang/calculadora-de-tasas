@@ -1,4 +1,5 @@
 # v0.2.2 4 dic 2020 23:00
+# some bugfixes and changes
 import matplotlib.pyplot as ploteame
 
 class error:
