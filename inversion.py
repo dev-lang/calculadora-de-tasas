@@ -1,5 +1,4 @@
-# v0.2.2 4 dic 2020 23:00
-# some bugfixes and changes
+# v0.2.2.3 5 dic 2020 10:47 51220201047
 import matplotlib.pyplot as ploteame
 
 class error:
@@ -60,8 +59,8 @@ data_bp_preset = [32966.933333333334,33933.86666666667,35984.603342222224,38159.
 
 plot_scale = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] # MESES, EJE X    # OK - ESCALA CHEQUEADA
 
-fmt1 = 'b'
-fmt2 = 'g'
+fmt1 = 'b--'
+fmt2 = 'g-.'
 
 def Graficar_Proyecciones(data_fci, data_bp, plot_scale):   # OK - CHEQUEADO
     ploteame.title("Calculadora de TASAS version alpha")
