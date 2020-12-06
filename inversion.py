@@ -26,7 +26,7 @@ class mensaje:
     reqdiag = 'Diagnostico de requisitos'
     runpip = "EJECUTAR pip install -r requeriments.txt\n"
     separador = "==========================================="
-    plttitle = "Calculadora de TASAS version alpha"
+    plottitle = "Calculadora de TASAS version alpha"
     insamount = "Ingrese el monto a invertir:"
     montoenmem = "Monto ingresado: $"
     daygain = "\nGanancia a las 24 hs: $"
