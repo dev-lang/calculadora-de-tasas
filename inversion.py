@@ -1,5 +1,67 @@
-# v0.2.2.3 5 dic 2020 10:47 51220201047
-import matplotlib.pyplot as ploteame
+# v0.2.2.4 6 dic 2020 12:21 61220201303
+#
+# changelog
+#
+# 1. se ha cambiado la forma de importar el modulo
+#   ahora se permite comprobar la existencia
+#   (en alguna version futura se pondra la posibilidad de instalarlo
+#   desde el propio programa
+#
+# 2. se ha corregido bug que hacia que el programa mostrara valores negativos
+
+
+import pkg_resources
+#import os           # para funcion futura desde terminal, se usara para poder ejecutar pip
+#import sys
+
+class col: #sin module
+    R = '\033[31m'          # ROJO
+    G = '\033[32m'          # VERDE
+
+def Reset():
+    workaround = '\033[m' #RESET COLORES. lo mismo que cuando usaba colorama y termcolor en el otro pj
+    print(workaround)
+
+class mensaje:
+    reqdiag = 'Diagnostico de requisitos'
+    runpip = "EJECUTAR pip install -r requeriments.txt\n"
+    separador = "==========================================="
+    plttitle = "Calculadora de TASAS version alpha"
+    insamount = "Ingrese el monto a invertir:"
+    montoenmem = "Monto ingresado: $"
+    daygain = "\nGanancia a las 24 hs: $"
+    fehgain = "\nGanancia a las 48 hs: $"
+    weekgain = "\nGanancia a la primer semana: $"
+    monthgain = "\nGanancia al primer mes: $"
+    gainof = "ganancia de:"
+    plotinout = "Importe/Ganancia"
+    plottime = "Meses/Tiempo"
+    
+
+#comprobacion de modulos BETA
+for package in ['matplotlib']:
+    try:
+        dist = pkg_resources.get_distribution(package)
+        #print('{} ({}) is installed'.format(dist.key, dist.version))
+    except pkg_resources.DistributionNotFound:
+        print(mensaje.reqdiag)
+        print('{} NO se encuentra instalado'.format(package)) 
+for package in ['matplotlib']:
+    try:
+        dist = pkg_resources.get_distribution(package)
+        #print('{} ({}) is installed'.format(dist.key, dist.version))
+    except pkg_resources.DistributionNotFound:
+        print(mensaje.runpip)
+        print (mensaje.separador)
+        #print('Ejecutar comando?')
+    pass
+
+try:
+    import matplotlib.pyplot as ploteame
+except:
+    pass
+
+
 
 class error:
     nofloat = 'no se aceptan flotantes.'
@@ -63,7 +125,7 @@ fmt1 = 'b--'
 fmt2 = 'g-.'
 
 def Graficar_Proyecciones(data_fci, data_bp, plot_scale):   # OK - CHEQUEADO
-    ploteame.title("Calculadora de TASAS version alpha")
+    ploteame.title(mensaje.plottitle)
     ploteame.plot(plot_scale,data_fci, fmt1,
                   plot_scale,data_bp, fmt2)
     ploteame.grid(True)
@@ -72,8 +134,8 @@ def Graficar_Proyecciones(data_fci, data_bp, plot_scale):   # OK - CHEQUEADO
     #ploteame.axis(1, 13, data_fci.index[13], data_bp.index[13])
     #print("axis: ", ploteame.axis())
     ploteame.xlim(1, 13)                                    # ALTERNATIVA A MODIFICAR AXIS, PERMITE MANTENER VALOR Y SEGUN REGISTRO
-    ploteame.ylabel("Importe/Ganancia")
-    ploteame.xlabel("Meses/Tiempo")
+    ploteame.ylabel(mensaje.plotinout)
+    ploteame.xlabel(mensaje.plottime)
     ploteame.legend(['FCI', 'BP'])                          # ALTERNATIVA A APLICAR EL LABEL EN EL PLOT, PERMITE MANTENER LA SINTAXIS, X1 Y X2
     ploteame.show()
 
@@ -101,7 +163,7 @@ def Agregar_A_Lista(total_mensual):                         # OK
 
 
 while True:
-    ingreso = input("Ingrese el monto a invertir:")
+    ingreso = input(mensaje.insamount)
     ingreso_inicial = ingreso # se almacena el ingreso para evitar que luego
                               # se haga un calculo con ingreso y los meses
                               # queden con la variable ingreso ya procesada
@@ -188,7 +250,7 @@ def nGanancia_Anual(ingreso, tasa): # corregir dias de fin de semana (excluirlos
         for datan in buffer: # este FOR es el que se encarga de armar cada cosa
             buffer_exit += str(datan)
             
-        print("mes", i, "ganancia de:", buffer_exit)
+        print("mes", i, mensaje.gainof, buffer_exit)
         buffer.clear
         
         i += 1
@@ -196,13 +258,7 @@ def nGanancia_Anual(ingreso, tasa): # corregir dias de fin de semana (excluirlos
 
     
 #print(ingreso, tasa)
-Calcular_Inversion(ingreso, tasa)
 
-Clear_Numeros()
-
-
-diaria = final/30
-correccion = 2.71
 
 # debug
 #print("diaria: ", diaria,
@@ -210,11 +266,26 @@ correccion = 2.71
 #      type(diaria),
 #      type(final))
 
-print("Monto ingresado: $", ingreso, "\nTasa estimada:", tasa,          #   OK
-      "\nGanancia a las 24 hs: $", diaria-correccion,                   #   FAIL
-      "\nGanancia a las 48 hs: $", (diaria-correccion)*2,               #   FAIL
-      "\nGanancia a la primer semana: $", (diaria-correccion)*7,        #   FAIL HEREDADO
-      "\n\nGanancia al primer mes: $", final, "\nTotal: $", total, "\n")#   FAIL HEREDADO
+
+def Precalculo(ingreso, tasa):
+    global diaria
+    global correccion
+    Calcular_Inversion(ingreso, tasa)
+    Clear_Numeros()
+    diaria = final/30
+
+    if diaria <= 2.71:
+        correccion = 0
+    else:
+        correccion = 2.71
+
+Precalculo(ingreso, tasa)
+
+print(mensaje.montoenmem, ingreso, "\nTasa estimada:", tasa,          #   OK
+      mensaje.daygain, diaria-correccion,                   #   FAILs corregidos
+      mensaje.fehgain, (diaria-correccion)*2,               
+      mensaje.weekgain, (diaria-correccion)*7,        
+      mensaje.monthgain, final, "\nTotal: $", total, "\n")
 
 ingreso = ingreso_inicial
 total = ingreso
