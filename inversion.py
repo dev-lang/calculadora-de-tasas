@@ -1,19 +1,18 @@
-# v0.2.2.4 7 dic 2020 14:38 712202011602
-#   v.0.2.2.4-712202011602
+# v0.2.2.4 7 dic 2020 17:01 71220201701
+#   v.0.2.2.4-71220201701
 # changelog
 #
-# 1. Se ha agregado funcion para generar plot_scale pero de acuerdo a una cantidad de dias
-#
-# 2. Funcion Graficar_Proyecciones ahora posee un parametro que permite modificar el limite del eje x y asi ahorrar
-#    una funcion para generar x cantidad de tiempo (en fase de pruebas)
-#
-#   BUG CONOCIDO: GENERA EJE X DE 60 DIAS AL USAR DOS PARAMETROS A GRAFICAR
-#   build 71220201546 sin exito, se ha eliminado funcion diaria en build 71220201602
+# 1. limpieza minima de codigo viejo (presets eliminados)
+# 2. preparacion para implementacion de argumentos por linea de comandos
+# formato esperado> -monto -data_fci -data_bp -graficar
+# 3. prearmado de funcion para argv
 
 
 import pkg_resources
 #import os           # para funcion futura desde terminal, se usara para poder ejecutar pip
 #import sys
+#import getopt, sys     # para futura implementacion con argumentos
+#from sys import argv   # argv se usara para leer los argumentos que se den por linea de comandos
 
 class col: #sin module
     R = '\033[31m'          # ROJO
@@ -102,7 +101,6 @@ tasa_plazo_fijo = 37 # BANCO PROVINCIA
 fluct = 0.66 # basado en aumento a 24.61
 fluct2 = 0.96 # basado en aumento a 25,57
 fluct3 = 0.4 # basado en aumento a 25.97
-#fluct4 = 0
 fluct_total = fluct + fluct2 + fluct3
 tasa += fluct_total
 total = 1 # workaround
@@ -112,15 +110,7 @@ buffer_exit = "$"
 
 data_fci = []
 data_bp = []
-#data_fci_daily = []
-#data_bp_daily = []
-''' los presets son solamente a modo de demostracion '''
-data_fci_preset = [32668.229333333333,33336.458666666666,34728.73363857422,36179.156046500175,37690.15437934489,39264.258550228646,40904.10413240658,42612.43677209378,44392.116785589096,46246.1239483947,48177.5624843501,50189.666263133986]
-data_bp_preset = [32966.933333333334,33933.86666666667,35984.603342222224,38159.272870870525,40465.364928033465,42910.82181518429,45504.06581354859,48254.02819088071,51170.17996121627,54262.564503539106,57541.83215170298,61019.27687473757]
-#data_fci_preset_broken = [458666666666,34728.73363857422,36179.156046500175,37690.15437934489,39264.258550228646,40904.10413240658,42612.43677209378,44392.116785589096,46246.1239483947,48177.5624843501,50189.666263133986]
-#data_bp_preset_broken = [35984.603342222224,38159.272870870525,40465.364928033465,42910.82181518429,45504.06581354859,48254.02819088071,51170.17996121627,54262.564503539106,57541.83215170298,61019.27687473757]
-
-
+''' presets eliminados en v.0.2.2.4-71220201642 '''
 
 plot_scale = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] # MESES, EJE X    # OK - ESCALA CHEQUEADA
 plot_scale_daily = [] # llenar con una funcion      # OK
@@ -133,10 +123,6 @@ def Graficar_Proyecciones(data_fci, data_bp, escala, eje_st, eje_lim):   # OK - 
     ploteame.plot(escala,data_fci, fmt1,
                   escala,data_bp, fmt2)
     ploteame.grid(True)
-    #print("axis: ", ploteame.axis())
-    #print(data_fci.index[13], data_bp.index[13])
-    #ploteame.axis(1, 13, data_fci.index[13], data_bp.index[13])
-    #print("axis: ", ploteame.axis())
     ploteame.xlim(eje_st, eje_lim)                                    # ALTERNATIVA A MODIFICAR AXIS, PERMITE MANTENER VALOR Y SEGUN REGISTRO
     ploteame.ylabel(mensaje.plotinout)
     ploteame.xlabel(mensaje.plottime)
@@ -145,8 +131,6 @@ def Graficar_Proyecciones(data_fci, data_bp, escala, eje_st, eje_lim):   # OK - 
 
 
 def GenerarMes(dia_inicial, dia_final):                     # FUNCION PARA GENERAR LISTA CON DIAS DEL MES
-    #global dia_inicial
-    #global dia_final
     global plot_scale_daily
     plot_scale_daily = []
     for i in range(dia_inicial, dia_final):
@@ -225,8 +209,10 @@ def Clear_Numeros():
     #      "ingreso: ", ingreso, "\n")
 
 def Clear_Listas():
-    data_fci_preset.clear()
-    data_bp_preset.clear()
+    data_fci.clear()
+    data_fci.clear()
+    #data_fci_preset.clear()
+    #data_bp_preset.clear()
 
 def nGanancia_Diaria(dia_inicial, dia_final, ingreso, tasa):     # incomplete
     #print(plot_scale_daily)                        # TEST LISTA            #      OK
@@ -382,3 +368,26 @@ print("\n")
 # FALTA CORREGIR ERROR QUE DUPLICA EJE X
 # error al graficar 30 dias
 
+
+
+
+
+''' version alpha, sin implementar o testear
+# estructura base para despues implementar argumentos
+if len(sys.argv) < 2: # sin argumentos, no muestra nada en pantalla, salvo un aviso
+    print(col.R + "") 
+    print("Debe especificar parametro.\nPor ejemplo -m para chocolate :)")  # CHOCOLATE ES UN EASTER EGG
+    #Reset()
+    #pausa()
+    sys.exit(1)
+elif sys.argv[1] == "-data_fci":
+    print("por el momento se requieren si o si tres o mas parametros "
+elif sys.argv[1] == "-data_bp":
+    print("por el momento se requieren si o si tres o mas parametros "
+    #pausa()                     # PAUSA OBLIGATORIA PARA EVITAR CIERRE DEL PROGRAMA
+elif sys.argv[1] > 1 "" and sys.argv[2] == "-data_fci" and sys.argv[3] == "-data_bp": # mostrar en modo texto
+    pass
+elif sys.argv[1] > 1 "" and sys.argv[2] == "-data_fci" and sys.argv[3] == "-data_bp" and sys.argv[4] == "-graficar": 
+	# ademas del modo texto, graficar
+    pass
+'''
