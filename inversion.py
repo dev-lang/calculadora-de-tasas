@@ -1,13 +1,14 @@
-# v0.2.2.4 6 dic 2020 12:21 61220201303
-#
+# v0.2.2.4 7 dic 2020 14:38 712202011602
+#   v.0.2.2.4-712202011602
 # changelog
 #
-# 1. se ha cambiado la forma de importar el modulo
-#   ahora se permite comprobar la existencia
-#   (en alguna version futura se pondra la posibilidad de instalarlo
-#   desde el propio programa
+# 1. Se ha agregado funcion para generar plot_scale pero de acuerdo a una cantidad de dias
 #
-# 2. se ha corregido bug que hacia que el programa mostrara valores negativos
+# 2. Funcion Graficar_Proyecciones ahora posee un parametro que permite modificar el limite del eje x y asi ahorrar
+#    una funcion para generar x cantidad de tiempo (en fase de pruebas)
+#
+#   BUG CONOCIDO: GENERA EJE X DE 60 DIAS AL USAR DOS PARAMETROS A GRAFICAR
+#   build 71220201546 sin exito, se ha eliminado funcion diaria en build 71220201602
 
 
 import pkg_resources
@@ -26,7 +27,7 @@ class mensaje:
     reqdiag = 'Diagnostico de requisitos'
     runpip = "EJECUTAR pip install -r requeriments.txt\n"
     separador = "==========================================="
-    plttitle = "Calculadora de TASAS version alpha"
+    plottitle = "Calculadora de TASAS version alpha"
     insamount = "Ingrese el monto a invertir:"
     montoenmem = "Monto ingresado: $"
     daygain = "\nGanancia a las 24 hs: $"
@@ -111,6 +112,8 @@ buffer_exit = "$"
 
 data_fci = []
 data_bp = []
+#data_fci_daily = []
+#data_bp_daily = []
 ''' los presets son solamente a modo de demostracion '''
 data_fci_preset = [32668.229333333333,33336.458666666666,34728.73363857422,36179.156046500175,37690.15437934489,39264.258550228646,40904.10413240658,42612.43677209378,44392.116785589096,46246.1239483947,48177.5624843501,50189.666263133986]
 data_bp_preset = [32966.933333333334,33933.86666666667,35984.603342222224,38159.272870870525,40465.364928033465,42910.82181518429,45504.06581354859,48254.02819088071,51170.17996121627,54262.564503539106,57541.83215170298,61019.27687473757]
@@ -120,24 +123,35 @@ data_bp_preset = [32966.933333333334,33933.86666666667,35984.603342222224,38159.
 
 
 plot_scale = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] # MESES, EJE X    # OK - ESCALA CHEQUEADA
+plot_scale_daily = [] # llenar con una funcion      # OK
 
 fmt1 = 'b--'
 fmt2 = 'g-.'
 
-def Graficar_Proyecciones(data_fci, data_bp, plot_scale):   # OK - CHEQUEADO
+def Graficar_Proyecciones(data_fci, data_bp, escala, eje_st, eje_lim):   # OK - CHEQUEADO
     ploteame.title(mensaje.plottitle)
-    ploteame.plot(plot_scale,data_fci, fmt1,
-                  plot_scale,data_bp, fmt2)
+    ploteame.plot(escala,data_fci, fmt1,
+                  escala,data_bp, fmt2)
     ploteame.grid(True)
     #print("axis: ", ploteame.axis())
     #print(data_fci.index[13], data_bp.index[13])
     #ploteame.axis(1, 13, data_fci.index[13], data_bp.index[13])
     #print("axis: ", ploteame.axis())
-    ploteame.xlim(1, 13)                                    # ALTERNATIVA A MODIFICAR AXIS, PERMITE MANTENER VALOR Y SEGUN REGISTRO
+    ploteame.xlim(eje_st, eje_lim)                                    # ALTERNATIVA A MODIFICAR AXIS, PERMITE MANTENER VALOR Y SEGUN REGISTRO
     ploteame.ylabel(mensaje.plotinout)
     ploteame.xlabel(mensaje.plottime)
     ploteame.legend(['FCI', 'BP'])                          # ALTERNATIVA A APLICAR EL LABEL EN EL PLOT, PERMITE MANTENER LA SINTAXIS, X1 Y X2
     ploteame.show()
+
+
+def GenerarMes(dia_inicial, dia_final):                     # FUNCION PARA GENERAR LISTA CON DIAS DEL MES
+    #global dia_inicial
+    #global dia_final
+    global plot_scale_daily
+    plot_scale_daily = []
+    for i in range(dia_inicial, dia_final):
+        plot_scale_daily.append(i)
+        i += 1
 
 def Setear_Flag(flag):                                      # OK
     global Flag_Set
@@ -148,10 +162,10 @@ def Setear_Flag(flag):                                      # OK
 '''
     Flag_Set = flag
 
-def Agregar_A_Lista(total_mensual):                         # OK
+def Agregar_A_Lista(total_mensual, data_fci, data_bp):                         # OK
     global Flag_Set
-    global data_fci
-    global data_bp
+    #global data_fci
+    #global data_bp
     if Flag_Set == 1:
         total_mensual = float(total_mensual)
         data_fci.append(total_mensual)
@@ -199,6 +213,7 @@ def Clear_Numeros():
     total_mensual = 0
     perdida = 0
     ingreso = ingreso_inicial
+    
     #print("VALOR ACTUAL: ",
     #      "resultado: ", resultado,
     #      "final: ", final,
@@ -213,10 +228,39 @@ def Clear_Listas():
     data_fci_preset.clear()
     data_bp_preset.clear()
 
-def nGanancia_Diaria():     # incomplete
-    for n in range(a, c):
-        n += 1
-        pass
+def nGanancia_Diaria(dia_inicial, dia_final, ingreso, tasa):     # incomplete
+    #print(plot_scale_daily)                        # TEST LISTA            #      OK
+    ''' FALTA FUNCION QUE HAGA UN PLOTEO Y GENERE UNA LISTA DE MANERA SIMILAR A ANUAL
+    PERO DE FORMA DIARIA ASI SE PUEDE OBTENER UN RESULTADO DIA A DIA
+    SE DEBE USAR PLOT_SCALE_DAILY COMO EJE DE ESCALA.
+    ES POSIBLE QUE REQUIERA UNA MODIFICACION EN XLIM DE ACUERDO AL PRIMER Y ULTIMO
+    REGISTRO DE LA LISTA GENERADA. 
+    '''
+    #print(dia_inicial, dia_final)
+    for i in range(dia_inicial, dia_final):
+        global buffer_dia
+        global buffer_dexit
+        global resultado_diario
+        Calcular_Inversion(ingreso, tasa)
+        total_mensual = total
+        ingreso = total_mensual
+
+        Agregar_A_Lista(total_mensual, data_fci_daily, data_bp_daily)
+
+        buffer_dia=[]
+        buffer_dia.append(total_mensual/dia_final)
+        buffer_dexit = "$"
+        datand = ""
+        for datand in buffer_dia: # este FOR es el que se encarga de armar cada cosa
+            buffer_dexit += str(datand/dia_final)
+            
+        print("dia", i, mensaje.gainof, buffer_dexit)
+        buffer_dia.clear
+        
+        i += 1
+        
+    
+    
 
 def nGanancia_Anual(ingreso, tasa): # corregir dias de fin de semana (excluirlos)
     for i in range(a, b):
@@ -231,7 +275,7 @@ def nGanancia_Anual(ingreso, tasa): # corregir dias de fin de semana (excluirlos
         total_mensual = total #+ final
         ingreso = total_mensual
         
-        Agregar_A_Lista(total_mensual)
+        Agregar_A_Lista(total_mensual, data_fci, data_bp)
         
         
         ''' DEBUG DE REGISTRO '''
@@ -287,6 +331,8 @@ print(mensaje.montoenmem, ingreso, "\nTasa estimada:", tasa,          #   OK
       mensaje.weekgain, (diaria-correccion)*7,        
       mensaje.monthgain, final, "\nTotal: $", total, "\n")
 
+
+
 ingreso = ingreso_inicial
 total = ingreso
 #print(ingreso, total, ingreso_inicial)
@@ -322,4 +368,17 @@ nGanancia_Anual(ingreso_inicial, tasa_plazo_fijo)
 #      "FCI PREDEFINIDA:", type(data_fci_preset), data_fci_preset, "\n",
 #      "PLAZO FIJO BP PREDEFINIDA:", type(data_bp_preset), data_bp_preset)
 
-Graficar_Proyecciones(data_fci, data_bp, plot_scale)
+Graficar_Proyecciones(data_fci, data_bp, plot_scale, 1, 13)
+
+Clear_Listas()
+Clear_Numeros()
+
+#
+
+GenerarMes(1, 31)
+print("\n")
+# GENERAR LISTA MENSUAL     #   OK
+#Graficar_Proyecciones(data_fci_daily, data_bp_daily, plot_scale_daily, 1, 31)
+# FALTA CORREGIR ERROR QUE DUPLICA EJE X
+# error al graficar 30 dias
+
