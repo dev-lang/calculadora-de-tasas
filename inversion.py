@@ -1,9 +1,9 @@
-# v0.2.2.4 7 dic 2020 18:25 71220202308 - DEBUG BUILD
-#   v.0.2.2.4-71220202308 - DEBUG BUILD
+# v0.2.2.5 8 dic 2020 19:17 81220202005
+#   v.0.2.2.5-81220202005
 # changelog
 #
-# 1. daily gen added
-# 2. some bugs detected
+# 1. Grafica diaria
+# 2. Corregida la generación de la gráfica diaria a partir de los datos creados
 
 
 
@@ -231,13 +231,17 @@ def Clear_Listas():
     #data_fci_preset.clear()
     #data_bp_preset.clear()
 
+def Agregar_a_listas_diarias(dato):
+    if Flag_Set == 1:
+        data_fci_daily.append(dato)
+    elif Flag_Set == 2:
+        data_bp_daily.append(dato)
+    else:
+        pass
+
 def nGanancia_Diaria(dia_inicial, dia_final, ingreso, tasa):     # incomplete
     #print(plot_scale_daily)                        # TEST LISTA            #      OK
-    ''' FALTA FUNCION QUE HAGA UN PLOTEO Y GENERE UNA LISTA DE MANERA SIMILAR A ANUAL
-    PERO DE FORMA DIARIA ASI SE PUEDE OBTENER UN RESULTADO DIA A DIA
-    SE DEBE USAR PLOT_SCALE_DAILY COMO EJE DE ESCALA.
-    ES POSIBLE QUE REQUIERA UNA MODIFICACION EN XLIM DE ACUERDO AL PRIMER Y ULTIMO
-    REGISTRO DE LA LISTA GENERADA. 
+    ''' CORREGIR FUNCION PARA QUE ALMACENE DATOS GENERADOS DE BUFFER_DIA EN DAILY
     '''
     #print(dia_inicial, dia_final)
     for i in range(dia_inicial, dia_final):
@@ -247,8 +251,7 @@ def nGanancia_Diaria(dia_inicial, dia_final, ingreso, tasa):     # incomplete
         Calcular_Inversion(ingreso, tasa)
         total_mensual = total
         ingreso = total_mensual
-
-        Agregar_A_Lista(total_mensual, data_fci_daily, data_bp_daily)
+        Cuenta = total_mensual/dia_final
 
         buffer_dia=[]
         buffer_dia.append(total_mensual/dia_final)
@@ -256,9 +259,11 @@ def nGanancia_Diaria(dia_inicial, dia_final, ingreso, tasa):     # incomplete
         datand = ""
         for datand in buffer_dia: # este FOR es el que se encarga de armar cada cosa
             buffer_dexit += str(datand/dia_final)
+            Agregar_a_listas_diarias(int(datand/dia_final))
             
         print("dia", i, mensaje.gainof, buffer_dexit)
         buffer_dia.clear
+
         
         i += 1
         
@@ -359,7 +364,12 @@ def GenerarIngresoDiario(ingreso, tasa):
     Y MUY PROBABLEMENTE ALGUNOS CAMBIOS MAS '''
     
     print("\n", mensaje.dailygain)
+    Setear_Flag(1)
+    print("Ganancia Diaria por FCI")
     nGanancia_Diaria(1, 31, ingreso_inicial, tasa)
+    Setear_Flag(2)
+    print("\nGanancia Diaria por BP Plazo Fijo")
+    nGanancia_Diaria(1, 31, ingreso_inicial, tasa_plazo_fijo)
     pass
 
 #1A - GENERAR INGRESOS MENSUALES
@@ -372,14 +382,15 @@ FLAG 2 BP (GENERADO POR HERENCIA DE LA FUNCION ANTERIOR) '''
 GenerarIngresoMensual(ingreso, tasa)
 
 GenerarMes(1, 31)   # GENERAR LISTA MENSUAL     #   OK
+print(data_fci_daily, data_bp_daily, plot_scale_daily, a, c+1)
 GenerarIngresoDiario(ingreso_inicial, tasa)
 print("\n")
 
-'''
+
 
 print(data_fci_daily, data_bp_daily, plot_scale_daily, a, c+1)
 Graficar_ProyeccionDiaria(data_fci_daily, data_bp_daily, plot_scale_daily, 1, 31)
-
+'''
 
 
 #Graficar_Proyecciones(data_fci_daily, data_bp_daily, plot_scale_daily, 1, 31)
