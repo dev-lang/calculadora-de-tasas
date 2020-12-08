@@ -1,11 +1,10 @@
-# v0.2.2.4 7 dic 2020 17:01 71220201701
-#   v.0.2.2.4-71220201701
+# v0.2.2.4 7 dic 2020 18:25 71220202308 - DEBUG BUILD
+#   v.0.2.2.4-71220202308 - DEBUG BUILD
 # changelog
 #
-# 1. limpieza minima de codigo viejo (presets eliminados)
-# 2. preparacion para implementacion de argumentos por linea de comandos
-# formato esperado> -monto -data_fci -data_bp -graficar
-# 3. prearmado de funcion para argv
+# 1. daily gen added
+# 2. some bugs detected
+
 
 
 import pkg_resources
@@ -36,6 +35,7 @@ class mensaje:
     gainof = "ganancia de:"
     plotinout = "Importe/Ganancia"
     plottime = "Meses/Tiempo"
+    dailygain = "Cálculo de ganancia diaria"
     
 
 #comprobacion de modulos BETA
@@ -110,6 +110,8 @@ buffer_exit = "$"
 
 data_fci = []
 data_bp = []
+data_fci_daily = []
+data_bp_daily = []
 ''' presets eliminados en v.0.2.2.4-71220201642 '''
 
 plot_scale = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] # MESES, EJE X    # OK - ESCALA CHEQUEADA
@@ -119,14 +121,29 @@ fmt1 = 'b--'
 fmt2 = 'g-.'
 
 def Graficar_Proyecciones(data_fci, data_bp, escala, eje_st, eje_lim):   # OK - CHEQUEADO
+    fig1 = ploteame.figure()
+    ax1 = fig1.add_subplot(111)
     ploteame.title(mensaje.plottitle)
-    ploteame.plot(escala,data_fci, fmt1,
+    ax1.plot(escala,data_fci, fmt1,
                   escala,data_bp, fmt2)
     ploteame.grid(True)
     ploteame.xlim(eje_st, eje_lim)                                    # ALTERNATIVA A MODIFICAR AXIS, PERMITE MANTENER VALOR Y SEGUN REGISTRO
     ploteame.ylabel(mensaje.plotinout)
     ploteame.xlabel(mensaje.plottime)
     ploteame.legend(['FCI', 'BP'])                          # ALTERNATIVA A APLICAR EL LABEL EN EL PLOT, PERMITE MANTENER LA SINTAXIS, X1 Y X2
+    ploteame.show()
+
+def Graficar_ProyeccionDiaria(a, b, escala, eje_st, eje_lim):   # OK - CHEQUEADO
+    fig2 = ploteame.figure()
+    ax2 = fig2.add_subplot(111)
+    ploteame.title("Proyeccion Diaria")
+    ax2.plot(escala,a, fmt1,
+                  escala,b, fmt2)
+    ploteame.grid(True)
+    ploteame.xlim(eje_st, eje_lim)                                    
+    ploteame.ylabel(mensaje.plotinout)
+    ploteame.xlabel("Dias")
+    ploteame.legend(['FCI', 'BP'])                          
     ploteame.show()
 
 
@@ -286,17 +303,6 @@ def nGanancia_Anual(ingreso, tasa): # corregir dias de fin de semana (excluirlos
         i += 1
 
 
-    
-#print(ingreso, tasa)
-
-
-# debug
-#print("diaria: ", diaria,
-#      "final: ", final,
-#      type(diaria),
-#      type(final))
-
-
 def Precalculo(ingreso, tasa):
     global diaria
     global correccion
@@ -309,70 +315,82 @@ def Precalculo(ingreso, tasa):
     else:
         correccion = 2.71
 
-Precalculo(ingreso, tasa)
 
-print(mensaje.montoenmem, ingreso, "\nTasa estimada:", tasa,          #   OK
-      mensaje.daygain, diaria-correccion,                   #   FAILs corregidos
-      mensaje.fehgain, (diaria-correccion)*2,               
-      mensaje.weekgain, (diaria-correccion)*7,        
-      mensaje.monthgain, final, "\nTotal: $", total, "\n")
+def GenerarIngresoMensual(ingreso, tasa):
+    global total
+    Precalculo(ingreso, tasa)
 
-
-
-ingreso = ingreso_inicial
-total = ingreso
-#print(ingreso, total, ingreso_inicial)
+    print(mensaje.montoenmem, ingreso, "\nTasa estimada:", tasa,          #   OK
+          mensaje.daygain, diaria-correccion,                   #   FAILs corregidos
+          mensaje.fehgain, (diaria-correccion)*2,               
+          mensaje.weekgain, (diaria-correccion)*7,        
+          mensaje.monthgain, final, "\nTotal: $", total, "\n")
 
 
-#Calcular_Inversion(ingreso, tasa_plazo_fijo)
 
-#Clear_Numeros()
+    ingreso = ingreso_inicial
+    total = ingreso
 
-#Clear_Listas()
-# 1        
-Setear_Flag(1)
-#print("FLAGSET: ", Flag_Set)
-# 2
-print(" TASA FCI")
-# 3
-''' GANANCIA ANUAL POR TASA FCI '''
+    # 1        
+    Setear_Flag(1)
+    # 2
+    print(" TASA FCI")
+    # 3
+    ''' GANANCIA ANUAL POR TASA FCI '''
+    nGanancia_Anual(ingreso_inicial, tasa)
+    # 1
+    Setear_Flag(2)
+    # 2
+    print("\n TASA PLAZO FIJO")
+    # 3
+    ''' GANANCIA ANUAL POR TASA PLAZO FIJO '''
+    nGanancia_Anual(ingreso_inicial, tasa_plazo_fijo)
 
-#print("INGRESO INICIAL: $", ingreso_inicial)
-nGanancia_Anual(ingreso_inicial, tasa)
-# 1
-Setear_Flag(2)
-#print("FLAGSET: ", Flag_Set)
-# 2
-print("\n TASA PLAZO FIJO")
-# 3
-''' GANANCIA ANUAL POR TASA PLAZO FIJO '''
-nGanancia_Anual(ingreso_inicial, tasa_plazo_fijo)
+    #print("\nDEBUG DE VARIABLES\n",
+    #      "FCI GENERADA:",  type(data_fci), data_fci, "\n",
+    #      "PLAZO FIJO BP GENERADA:", type(data_bp), data_bp, "\n",
+    #      "FCI PREDEFINIDA:", type(data_fci_preset), data_fci_preset, "\n",
+    #      "PLAZO FIJO BP PREDEFINIDA:", type(data_bp_preset), data_bp_preset)
 
-#print("\nDEBUG DE VARIABLES\n",
-#      "FCI GENERADA:",  type(data_fci), data_fci, "\n",
-#      "PLAZO FIJO BP GENERADA:", type(data_bp), data_bp, "\n",
-#      "FCI PREDEFINIDA:", type(data_fci_preset), data_fci_preset, "\n",
-#      "PLAZO FIJO BP PREDEFINIDA:", type(data_bp_preset), data_bp_preset)
+    Graficar_Proyecciones(data_fci, data_bp, plot_scale, 1, 13)
 
-Graficar_Proyecciones(data_fci, data_bp, plot_scale, 1, 13)
+def GenerarIngresoDiario(ingreso, tasa):
+    ''' FALTAN FLAGS
+    Y MUY PROBABLEMENTE ALGUNOS CAMBIOS MAS '''
+    
+    print("\n", mensaje.dailygain)
+    nGanancia_Diaria(1, 31, ingreso_inicial, tasa)
+    pass
 
-Clear_Listas()
-Clear_Numeros()
+#1A - GENERAR INGRESOS MENSUALES
 
-#
+''' CORREGIR CODIGO CON FLAGS PARA PODER GUARDAR AMBOS REGISTROS
 
-GenerarMes(1, 31)
+FLAG 1 FCI (FALTANTE)
+FLAG 2 BP (GENERADO POR HERENCIA DE LA FUNCION ANTERIOR) '''
+
+GenerarIngresoMensual(ingreso, tasa)
+
+GenerarMes(1, 31)   # GENERAR LISTA MENSUAL     #   OK
+GenerarIngresoDiario(ingreso_inicial, tasa)
 print("\n")
-# GENERAR LISTA MENSUAL     #   OK
+
+'''
+
+print(data_fci_daily, data_bp_daily, plot_scale_daily, a, c+1)
+Graficar_ProyeccionDiaria(data_fci_daily, data_bp_daily, plot_scale_daily, 1, 31)
+
+
+
 #Graficar_Proyecciones(data_fci_daily, data_bp_daily, plot_scale_daily, 1, 31)
 # FALTA CORREGIR ERROR QUE DUPLICA EJE X
 # error al graficar 30 dias
 
 
+''' '''
 
 
-
-''' version alpha, sin implementar o testear
+version alpha, sin implementar o testear
 # estructura base para despues implementar argumentos
 if len(sys.argv) < 2: # sin argumentos, no muestra nada en pantalla, salvo un aviso
     print(col.R + "") 
