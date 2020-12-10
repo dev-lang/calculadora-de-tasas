@@ -1,10 +1,11 @@
-# v0.2.2.5 8 dic 2020 19:17 81220202005
-#   v.0.2.2.5-81220202005
+# v0.2.2.5 10 dic 2020 17:25 101220201724
+#   v.0.2.2.5-101220201724
 # changelog
 #
-# 1. Grafica diaria
-# 2. Corregida la generación de la gráfica diaria a partir de los datos creados
-
+# 1. tasa FCI actualizada
+# 2. se ha eliminado modo debug en pantalla
+#
+# falta corregir salida diaria para que de el valor correcto
 
 
 import pkg_resources
@@ -101,7 +102,8 @@ tasa_plazo_fijo = 37 # BANCO PROVINCIA
 fluct = 0.66 # basado en aumento a 24.61
 fluct2 = 0.96 # basado en aumento a 25,57
 fluct3 = 0.4 # basado en aumento a 25.97
-fluct_total = fluct + fluct2 + fluct3
+fluct4 = 0.65 # basado en aumento a 26.62
+fluct_total = fluct + fluct2 + fluct3 + fluct4
 tasa += fluct_total
 total = 1 # workaround
 final = 1 # workaround
@@ -241,7 +243,7 @@ def Agregar_a_listas_diarias(dato):
 
 def nGanancia_Diaria(dia_inicial, dia_final, ingreso, tasa):     # incomplete
     #print(plot_scale_daily)                        # TEST LISTA            #      OK
-    ''' CORREGIR FUNCION PARA QUE ALMACENE DATOS GENERADOS DE BUFFER_DIA EN DAILY
+    ''' OK - WORKAROUND
     '''
     #print(dia_inicial, dia_final)
     for i in range(dia_inicial, dia_final):
@@ -382,13 +384,13 @@ FLAG 2 BP (GENERADO POR HERENCIA DE LA FUNCION ANTERIOR) '''
 GenerarIngresoMensual(ingreso, tasa)
 
 GenerarMes(1, 31)   # GENERAR LISTA MENSUAL     #   OK
-print(data_fci_daily, data_bp_daily, plot_scale_daily, a, c+1)
+#print(data_fci_daily, data_bp_daily, plot_scale_daily, a, c+1)
 GenerarIngresoDiario(ingreso_inicial, tasa)
 print("\n")
 
 
 
-print(data_fci_daily, data_bp_daily, plot_scale_daily, a, c+1)
+#print(data_fci_daily, data_bp_daily, plot_scale_daily, a, c+1)
 Graficar_ProyeccionDiaria(data_fci_daily, data_bp_daily, plot_scale_daily, 1, 31)
 '''
 
