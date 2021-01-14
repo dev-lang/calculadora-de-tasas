@@ -1,9 +1,9 @@
-# v0.2.2.5 10 dic 2020 17:25 101220201724
-#   v.0.2.2.5-101220201724
+# v0.2.2.5 14 ene 2021 17:18 101220201724-2
+#   v.0.2.2.5-101220201724-2
 # changelog
 #
 # 1. tasa FCI actualizada
-# 2. se ha eliminado modo debug en pantalla
+# 2. se ha cambiado el metodo para almacenar fluctuaciones por una lista en lugar de variables
 #
 # falta corregir salida diaria para que de el valor correcto
 
@@ -99,11 +99,29 @@ plazo_fijo_ganancia_mensual = ingreso * (tasa_plazo_fijo / 100) / 12
 
 '''
 tasa_plazo_fijo = 37 # BANCO PROVINCIA
-fluct = 0.66 # basado en aumento a 24.61
-fluct2 = 0.96 # basado en aumento a 25,57
-fluct3 = 0.4 # basado en aumento a 25.97
-fluct4 = 0.65 # basado en aumento a 26.62
-fluct_total = fluct + fluct2 + fluct3 + fluct4
+#0.66 # basado en aumento a 24.61
+#0.96 # basado en aumento a 25,57
+#0.4 # basado en aumento a 25.97
+#0.65 # basado en aumento a 26.62
+#0.32 # perdida, en teoria 26.94
+#0.38 # basado en 27.32
+#0.54 # basado en 27.86
+#0.56 # basado en 28.42
+#0.5    # basado en 28.92
+fluct = [0.66, 0.96, 0.4, 0.65, 0.32, 0.38, 0.54, 0.56, 0.5]
+
+def sumarFluctuacionParaObtenerTasaFinal(fluct):
+  global fluct_total
+  # debe dar el resultado en fluct_total
+  fluct_total = 0
+  for f in fluct:
+    fluct_total += f
+  return fluct_total
+
+sumarFluctuacionParaObtenerTasaFinal(fluct)
+
+
+print(fluct_total)
 tasa += fluct_total
 total = 1 # workaround
 final = 1 # workaround
