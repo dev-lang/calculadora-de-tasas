@@ -1,9 +1,8 @@
-# v0.2.2.5 19 ene 2021 17:32 101220201724-4
-#   v.0.2.2.5-101220201724-4
+# v0.2.2.5 07 feb 2021 18:45 101220201724-4.1
+#   v.0.2.2.5-101220201724-4.1
 # changelog
 #
 # 1. tasa FCI actualizada
-# 2. disabled 5.4399999999999995 error (fluct bug)
 #
 # falta corregir salida diaria para que de el valor correcto
 
@@ -109,7 +108,8 @@ tasa_plazo_fijo = 37 # BANCO PROVINCIA
 #0.56 # basado en 28.42
 #0.5    # basado en 28.92
 #0.47   # basado en 29.39
-fluct = [0.66, 0.96, 0.4, 0.65, 0.32, 0.38, 0.54, 0.56, 0.5, 0.47]
+#0.7    # basado en 30.09
+fluct = [0.66, 0.96, 0.4, 0.65, 0.32, 0.38, 0.54, 0.56, 0.5, 0.47, 0.70]
 
 def sumarFluctuacionParaObtenerTasaFinal(fluct):
   global fluct_total
