@@ -1,5 +1,5 @@
-# v0.2.2.5 07 feb 2021 18:45 101220201724-4.1
-#   v.0.2.2.5-101220201724-4.1
+# v0.2.2.5 25 mar 2021 20:40 101220201724-4.2
+#   v.0.2.2.5-101220201724-4.2
 # changelog
 #
 # 1. tasa FCI actualizada
@@ -109,7 +109,8 @@ tasa_plazo_fijo = 37 # BANCO PROVINCIA
 #0.5    # basado en 28.92
 #0.47   # basado en 29.39
 #0.7    # basado en 30.09
-fluct = [0.66, 0.96, 0.4, 0.65, 0.32, 0.38, 0.54, 0.56, 0.5, 0.47, 0.70]
+#30.32 30.53 30.62 30.70 30.72 30.62 30.24
+fluct = [0.66, 0.96, 0.4, 0.65, 0.32, 0.38, 0.54, 0.56, 0.5, 0.47, 0.70, 0.23, 0.21, 0.09, 0.08, 0.02, float(-0.1), float(-0.2)]
 
 def sumarFluctuacionParaObtenerTasaFinal(fluct):
   global fluct_total
